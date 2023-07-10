@@ -1,45 +1,50 @@
-# code-sample-description
-This sample repo will show you how to easily do X with Nylas.
+# streamlit_email_dashboard
+
+This sample will show you how to create an email dashboard using Streamlit.
+
+You can follow along step-by-step in our blog post ["Streamlit: Building an Email Dashboard"](https://www.nylas.com/blog/streamlit-building-an-email-dashboard/).
 
 ## Setup
 
 ### System dependencies
 
-- Add System dependencies
+- Python v3.x
 
 ### Gather environment variables
 
-You'll need the following values from the Nylas Dashboard:
+You'll need the following values:
 
 ```text
-ACCESS_TOKEN = ""
 CLIENT_ID = ""
 CLIENT_SECRET = ""
+ACCESS_TOKEN = ""
 ```
 
-Add the above values to a `.env` file.
+Add the above values to a new `.env` file:
 
-The `.env` file is added to `.gitignore`. Ensure to store these values securely.
+```bash
+$ touch .env # Then add your env variables
+```
 
 ### Install dependencies
 
-[replace with install steps]
 ```bash
-$ npm i
+$ pip3 install streamlit # Pure Python package that allows you to create data scripts into web apps in minutes
+$ pip3 install python-dotenv # Environment variables
+$ pip3 install matplotlib # Library for creating static, animated, and interactive visualizations
+$ pip3 install pandas # Python data analysis library
 ```
 
 ## Usage
 
-The recommended way to use this sample is ...
+Run the file **streamlit_email_dashboard.py**:
 
-You can also clone the repository ...
+```bash
+$ streamlit run streamlit_email_dashboard.py
+```
 
-You'll find more detailed instructions ...
-
-## Get support
-
-If you found a bug or want to suggest a new [feature/use case/sample], please file an issue.
+Streamlit will open up your browser on port 8510.
 
 ## Learn more
 
-Visit our [Nylas documentation](https://developer.nylas.com/) to learn more.
+Visit our [Nylas Python SDK documentation](https://developer.nylas.com/docs/developer-tools/sdk/python-sdk/) to learn more.

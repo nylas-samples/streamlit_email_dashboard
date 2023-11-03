@@ -1,21 +1,21 @@
-# Load your env variables
-from dotenv import load_dotenv
-load_dotenv()
-
 # Import your dependencies
-from nylas import APIClient
+from nylas import Client
 import streamlit as st
 from wordcloud import WordCloud
 import os
 import pandas as pd
 import altair as alt
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
+from nylas.models.messages import ListMessagesQueryParams
+
+# Load your env variables
+load_dotenv()
 
 # Initialize your Nylas API client
-nylas = APIClient(
-    os.environ.get("CLIENT_ID"),
-    os.environ.get("CLIENT_SECRET"),
-    os.environ.get("ACCESS_TOKEN")
+# Initialize Nylas client
+nylas = Client(
+    api_key = os.environ.get("V3_API_KEY")
 )
 
 # Auxiliar variables
@@ -26,18 +26,30 @@ text = ""
 st.title('Email Dashboard')
 num = st.slider('How many emails?', 1, 200, 50)
 
-# Get emails from your inbox folder
-f_messages = nylas.messages.where(in_='inbox', limit = num)
-# Get emails from your sent folder
-t_messages = nylas.messages.where(in_='sent', limit = num)
+# Create query parameters
+f_query_params = ListMessagesQueryParams(
+	{'in' : "inbox",
+	'limit': num}
+)
 
+# Create query parameters
+t_query_params = ListMessagesQueryParams(
+	{'in' : "sent",
+	'limit': num}
+)
+
+# Get emails from your inbox folder
+f_messages, _, _ = nylas.messages.list(os.environ.get("GRANT_ID"), f_query_params)
+# Get emails from your sent folder
+t_messages, _, _ = nylas.messages.list(os.environ.get("GRANT_ID"), t_query_params)
+print(f_messages)
 # Loop through your inbox emails
 for msg in f_messages:
 	# Get the name of the person emailing you
-	if(msg["from_"][0]["name"] != ""):
-		from_messages.append(msg["from_"][0]["name"].split()[0])
+	if(msg.from_[0].email != ""):
+		from_messages.append(msg.from_[0].email.split()[0])
 	# Concatate the subjects of all emails
-	text = text + " " + msg["subject"]
+	text = text + " " + msg.subject
 # Turn the array into a data frame	
 f_df = pd.DataFrame(from_messages, columns=['Names'])
 # Aggregate values, get the top 3 and a name to the new column
@@ -47,8 +59,8 @@ top_3_from.columns = ['person', 'count']
 # Loop through your sent emails
 for msg in t_messages:
 	# Get the name of the person you're emailing	
-	if(msg["to"][0]["name"] != ""):	
-		to_messages.append(msg["to"][0]["name"].split()[0])
+	if(msg.from_[0].email != ""):	
+		to_messages.append(msg.to[0].email.split()[0])
 # Turn the array into a data frame		
 t_df = pd.DataFrame(to_messages, columns=['Names'])
 # Aggregate values, get the top 3 and a name to the new column

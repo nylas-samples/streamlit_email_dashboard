@@ -42,14 +42,17 @@ t_query_params = ListMessagesQueryParams(
 f_messages, _, _ = nylas.messages.list(os.environ.get("GRANT_ID"), f_query_params)
 # Get emails from your sent folder
 t_messages, _, _ = nylas.messages.list(os.environ.get("GRANT_ID"), t_query_params)
-print(f_messages)
+
 # Loop through your inbox emails
 for msg in f_messages:
-	# Get the name of the person emailing you
-	if(msg.from_[0].email != ""):
-		from_messages.append(msg.from_[0].email.split()[0])
+    try:
+	    # Get the name of the person emailing you
+        if(msg.from_[0]['name'] != ""):
+            from_messages.append(msg.from_[0]['name'].split()[0].replace('"', ''))
+    except KeyError:
+        from_messages.append(msg.from_[0]['email'].split("@")[0])
 	# Concatate the subjects of all emails
-	text = text + " " + msg.subject
+    text = text + " " + msg.subject
 # Turn the array into a data frame	
 f_df = pd.DataFrame(from_messages, columns=['Names'])
 # Aggregate values, get the top 3 and a name to the new column
@@ -58,9 +61,12 @@ top_3_from.columns = ['person', 'count']
 
 # Loop through your sent emails
 for msg in t_messages:
-	# Get the name of the person you're emailing	
-	if(msg.from_[0].email != ""):	
-		to_messages.append(msg.to[0].email.split()[0])
+    try:
+	    # Get the name of the person you're emailing	
+        if(msg.to[0]['name'] != ""):	
+            to_messages.append(msg.to[0]['name'].split()[0].replace('"', ''))
+    except KeyError:
+        to_messages.append(msg.to[0]['email'].split("@")[0])
 # Turn the array into a data frame		
 t_df = pd.DataFrame(to_messages, columns=['Names'])
 # Aggregate values, get the top 3 and a name to the new column
